@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: cursive;
+            background-color: #000000d2;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .contaier {
+            display: flex;
+            /* height: 410px; */
+            width: 300px;
+            background: linear-gradient(135deg, #34d5ac, #3d9cdf);
+            border-radius: 10px;
+            box-shadow: 5px 5px 8px 1px rgba(0, 0, 0, 0.244);
+            flex-direction: column;
+        }
+
+        .search {
+            margin: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .searchBar {
+            width: 90%;
+            max-width: 200px;
+            height: 40px;
+            background-color: white;
+            border-radius: 40px;
+            border: none;
+            /* border: 1px solid #34d5ac; */
+            padding-left: 15px;
+
+        }
+
+        .searchBar::placeholder {
+            color: #999;
+        }
+
+        .searchBar:focus {
+            outline: none;
+            border: none;
+        }
+
+        .searchIcn {
+            height: 40px;
+            width: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 2px;
+            cursor: pointer;
+            color: black;
+        }
+
+        .searchIcn:hover {
+            background-color: rgba(255, 255, 255, 0.861);
+        }
+
+        .image {
+            display: flex;
+            justify-content: center;
+        }
+
+        .image>img {
+            width: 50%;
+        }
+
+        .temp {
+            font-size: 40px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+        }
+
+        .city {
+            font-size: 25px;
+            display: flex;
+            justify-content: center;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .detail {
+            margin: 15px 0 20px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .detail img {
+            width: 40%;
+        }
+
+        .extra {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .extrafoot {
+            font-size: 10px;
+        }
+
+        .humidity,
+        .wind {
+            padding-right: 17px;
+        }
+
+        .humidity>img,
+        .wind>img {
+            width: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contaier">
+        <div class="search">
+            <input type="text" placeholder="enter city name" class="searchBar" spellcheck="false"></input>
+            <i class="fa fa-search searchIcn"></i>
+
+        </div>
+        <div class="image">
+            <img src="./images/clouds.png" alt="">
+        </div>
+        <div class="temp"></div>
+        <div class="city">&nbsp;</div>
+        <div class="detail">
+            <div class="extra">
+                <div class="humidity">
+                    <img src="./images/humidity.png">
+                </div>
+                <div class="one">
+                    <div class="htext">jskdhf</div>
+                    <div class="extrafoot">Humidity</div>
+                </div>
+            </div>
+            <div class="extra">
+                <div class="wind">
+                    <img src="./images/wind.png">
+                </div>
+                <div class="one">
+                    <div class="wtext">jskdhf </div>
+                    <div class="extrafoot">Wind Speed</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function call(City) {
+            let url = `https://api.openweathermap.org/data/2.5/weather?q=${City}&appid=c330258212ec821bb3d71d19636ac3ca&units=metric`
+            fetch(url)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then((res) => {
+                    // console.log(res)
+                    document.querySelector('.city').textContent = res.name;
+                    document.querySelector('.temp').textContent = res.main.temp + '°C';
+                    document.querySelector('.htext').innerHTML = res.main.humidity + '%'
+                    document.querySelector('.wtext').innerHTML = res.wind.speed + 'km/h'
+                    const img = document.querySelector(".image>img")
+                    // console.log(res.weather[0].main)
+                    if (res.weather[0].main === "Clear") {
+                        img.src = "./images/clear.png";
+                    }
+                    else if (res.weather[0].main === "Rain") {
+                        img.src = "./images/rain.png";
+                    }
+                    else if (res.weather[0].main === "Clouds") {
+                        img.src = "./images/clouds.png";
+                    }
+                    else if (res.weather[0].main === "Snow") {
+                        img.src = "./images/snow.png";
+                    }
+                    else if (res.weather[0].main === "Drizzle") {
+                        img.src = "./images/drizzle.png";
+                    }
+                    else if (res.weather[0].main === "Mist") {
+                        img.src = "./images/mist.png";
+                    }
+                    else {
+                        img.src = "./images/clear.png";
+                    }
+
+                    document.querySelector('.searchBar').value = '';
+
+                })
+                .catch((error) => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+        call("new york")
+        document.querySelector('.searchIcn').addEventListener('click', () => {
+            let city = document.querySelector('.searchBar').value;
+            call(city)
+        })
+        document.querySelector('.searchBar').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                let city = document.querySelector('.searchBar').value;
+                call(city)
+            }
+        })
+    </script>
+</body>
+
+</html>
